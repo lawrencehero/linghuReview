@@ -1,0 +1,175 @@
+<!--history.wxml-->
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="search-section">
+    <view class="search-bar">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" 
+             placeholder="搜索复盘记录..." 
+             value="{{searchKeyword}}"
+             bindinput="onSearchInput"
+             bindconfirm="onSearch" />
+      <button class="filter-btn" bindtap="onShowFilter">
+        <text class="filter-icon">⚙️</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 筛选标签 -->
+  <view class="filter-tags" wx:if="{{activeFilters.length > 0}}">
+    <view class="filter-tag" wx:for="{{activeFilters}}" wx:key="*this">
+      <text>{{item}}</text>
+      <text class="remove-filter" bindtap="onRemoveFilter" data-filter="{{item}}">×</text>
+    </view>
+    <button class="clear-filters" bindtap="onClearFilters">清除全部</button>
+  </view>
+
+  <!-- 时间筛选 -->
+  <view class="time-filter">
+    <button class="time-btn {{timeFilter === 'all' ? 'active' : ''}}" 
+            bindtap="onTimeFilter" data-filter="all">全部</button>
+    <button class="time-btn {{timeFilter === 'week' ? 'active' : ''}}" 
+            bindtap="onTimeFilter" data-filter="week">本周</button>
+    <button class="time-btn {{timeFilter === 'month' ? 'active' : ''}}" 
+            bindtap="onTimeFilter" data-filter="month">本月</button>
+    <button class="time-btn {{timeFilter === 'quarter' ? 'active' : ''}}" 
+            bindtap="onTimeFilter" data-filter="quarter">本季度</button>
+  </view>
+
+  <!-- 统计信息 -->
+  <view class="stats-bar">
+    <text class="stats-text">共找到 {{filteredReviews.length}} 条记录</text>
+    <button class="sort-btn" bindtap="onToggleSort">
+      <text>{{sortOrder === 'desc' ? '最新' : '最旧'}}优先</text>
+      <text class="sort-icon">{{sortOrder === 'desc' ? '↓' : '↑'}}</text>
+    </button>
+  </view>
+
+  <!-- 复盘列表 -->
+  <view class="reviews-list">
+    <view class="review-item card fade-in" 
+          wx:for="{{displayReviews}}" 
+          wx:key="id"
+          bindtap="onViewDetail"
+          data-id="{{item.id}}">
+      
+      <!-- 复盘头部 -->
+      <view class="review-header">
+        <view class="review-title-section">
+          <text class="review-title">{{item.title}}</text>
+          <view class="review-meta">
+            <text class="review-time">{{item.timeAgo}}</text>
+            <text class="review-type">{{item.typeText}}</text>
+          </view>
+        </view>
+        <view class="review-actions">
+          <button class="action-btn" bindtap="onEditReview" data-id="{{item.id}}" catchtap="">
+            <text class="action-icon">✏️</text>
+          </button>
+          <button class="action-btn" bindtap="onDeleteReview" data-id="{{item.id}}" catchtap="">
+            <text class="action-icon">🗑️</text>
+          </button>
+        </view>
+      </view>
+
+      <!-- 复盘内容预览 -->
+      <view class="review-content">
+        <view class="content-section" wx:if="{{item.highlights}}">
+          <text class="content-label">✨ 亮点：</text>
+          <text class="content-preview">{{item.highlights}}</text>
+        </view>
+        <view class="content-section" wx:if="{{item.challenges}}">
+          <text class="content-label">🤔 挑战：</text>
+          <text class="content-preview">{{item.challenges}}</text>
+        </view>
+        <view class="content-section" wx:if="{{item.learnings}}">
+          <text class="content-label">📚 学习：</text>
+          <text class="content-preview">{{item.learnings}}</text>
+        </view>
+      </view>
+
+      <!-- 标签和心情 -->
+      <view class="review-footer">
+        <view class="review-tags">
+          <text class="tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+        </view>
+        <view class="mood-indicator">
+          <text class="mood-emoji">{{item.moodEmoji}}</text>
+          <text class="mood-score">{{item.moodScore}}/5</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 加载更多 -->
+    <view class="load-more" wx:if="{{hasMore}}">
+      <button class="load-more-btn" bindtap="onLoadMore" loading="{{loading}}">
+        {{loading ? '加载中...' : '加载更多'}}
+      </button>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{displayReviews.length === 0 && !loading}}">
+      <text class="empty-icon">📝</text>
+      <text class="empty-text">{{searchKeyword ? '没有找到相关记录' : '还没有复盘记录'}}</text>
+      <text class="empty-desc">{{searchKeyword ? '试试其他关键词' : '开始你的第一次复盘吧'}}</text>
+      <button class="btn-primary mt-20" bindtap="onCreateReview" wx:if="{{!searchKeyword}}">
+        立即开始
+      </button>
+    </view>
+  </view>
+</view>
+
+<!-- 筛选弹窗 -->
+<view class="filter-modal {{showFilterModal ? 'active' : ''}}" bindtap="onCloseFilter">
+  <view class="filter-modal-content" catchtap="">
+    <view class="modal-header">
+      <text class="modal-title">筛选条件</text>
+      <button class="modal-close" bindtap="onCloseFilter">×</button>
+    </view>
+    
+    <view class="filter-content">
+      <!-- 复盘类型筛选 -->
+      <view class="filter-group">
+        <text class="filter-group-title">复盘类型</text>
+        <view class="filter-options">
+          <button class="filter-option {{typeFilters.includes(item.value) ? 'active' : ''}}"
+                  wx:for="{{reviewTypes}}" wx:key="value"
+                  bindtap="onToggleTypeFilter" data-type="{{item.value}}">
+            {{item.label}}
+          </button>
+        </view>
+      </view>
+
+      <!-- 标签筛选 -->
+      <view class="filter-group">
+        <text class="filter-group-title">标签</text>
+        <view class="filter-options">
+          <button class="filter-option {{tagFilters.includes(item) ? 'active' : ''}}"
+                  wx:for="{{allTags}}" wx:key="*this"
+                  bindtap="onToggleTagFilter" data-tag="{{item}}">
+            {{item}}
+          </button>
+        </view>
+      </view>
+
+      <!-- 心情筛选 -->
+      <view class="filter-group">
+        <text class="filter-group-title">心情评分</text>
+        <view class="mood-filter">
+          <button class="mood-option {{moodFilter === item.value ? 'active' : ''}}"
+                  wx:for="{{moodOptions}}" wx:key="value"
+                  bindtap="onMoodFilter" data-mood="{{item.value}}">
+            <text class="mood-emoji">{{item.emoji}}</text>
+            <text class="mood-text">{{item.label}}</text>
+          </button>
+        </view>
+      </view>
+    </view>
+
+    <view class="filter-actions">
+      <button class="filter-action-btn secondary" bindtap="onResetFilter">重置</button>
+      <button class="filter-action-btn primary" bindtap="onApplyFilter">应用筛选</button>
+    </view>
+  </view>
+</view>
+

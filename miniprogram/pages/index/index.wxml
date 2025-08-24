@@ -1,0 +1,110 @@
+<!--index.wxml-->
+<view class="container">
+  <!-- 头部用户信息 -->
+  <view class="header primary-bg">
+    <view class="user-info">
+      <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="user-details">
+        <text class="user-name">{{userInfo.nickName || '灵狐用户'}}</text>
+        <text class="user-level">Lv.{{userLevel}} 复盘达人</text>
+      </view>
+    </view>
+    <view class="notification-btn" bindtap="onNotificationTap">
+      <text class="icon">🔔</text>
+    </view>
+  </view>
+
+  <!-- 统计数据 -->
+  <view class="stats-section">
+    <view class="stats-grid">
+      <view class="stat-card card fade-in">
+        <text class="stat-number">{{stats.continuousDays}}</text>
+        <text class="stat-label">连续天数</text>
+      </view>
+      <view class="stat-card card fade-in">
+        <text class="stat-number">{{stats.completionRate}}%</text>
+        <text class="stat-label">完成率</text>
+      </view>
+    </view>
+
+    <!-- 进度条 -->
+    <view class="progress-card card fade-in">
+      <view class="progress-header">
+        <text class="progress-title">本周复盘进度</text>
+        <text class="progress-percentage">{{weekProgress.completed}}/{{weekProgress.total}}</text>
+      </view>
+      <view class="progress-bar">
+        <view class="progress-fill" style="width: {{weekProgress.percentage}}%"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷操作 -->
+  <view class="quick-actions">
+    <view class="action-btn card scale-in" bindtap="onCreateReview">
+      <text class="action-icon">📝</text>
+      <text class="action-text">开始复盘</text>
+    </view>
+    <view class="action-btn card scale-in" bindtap="onViewStats">
+      <text class="action-icon">📊</text>
+      <text class="action-text">查看统计</text>
+    </view>
+  </view>
+
+  <!-- 今日提醒 -->
+  <view class="reminder-section" wx:if="{{todayReminder}}">
+    <view class="reminder-card card fade-in">
+      <view class="reminder-header">
+        <text class="reminder-icon">💡</text>
+        <text class="reminder-title">今日提醒</text>
+      </view>
+      <text class="reminder-content">{{todayReminder}}</text>
+    </view>
+  </view>
+
+  <!-- 最近记录 -->
+  <view class="recent-section">
+    <view class="section-header">
+      <text class="section-title">最近复盘</text>
+      <text class="more-btn" bindtap="onViewHistory">查看更多</text>
+    </view>
+    
+    <view class="recent-list">
+      <view class="recent-item card fade-in" 
+            wx:for="{{recentReviews}}" 
+            wx:key="id"
+            bindtap="onViewDetail"
+            data-id="{{item.id}}">
+        <view class="recent-content">
+          <text class="recent-title">{{item.title}}</text>
+          <text class="recent-preview">{{item.preview}}</text>
+          <view class="recent-meta">
+            <text class="recent-time">{{item.timeAgo}}</text>
+            <view class="recent-tags">
+              <text class="tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+            </view>
+          </view>
+        </view>
+        <text class="recent-arrow">›</text>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{recentReviews.length === 0}}">
+      <text class="empty-icon">📝</text>
+      <text class="empty-text">还没有复盘记录</text>
+      <text class="empty-desc">开始你的第一次复盘吧</text>
+      <button class="btn-primary mt-20" bindtap="onCreateReview">立即开始</button>
+    </view>
+  </view>
+
+  <!-- 每日一句 -->
+  <view class="quote-section">
+    <view class="quote-card card fade-in">
+      <text class="quote-icon">💭</text>
+      <text class="quote-content">{{dailyQuote.content}}</text>
+      <text class="quote-author">—— {{dailyQuote.author}}</text>
+    </view>
+  </view>
+</view>
+

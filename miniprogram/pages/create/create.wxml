@@ -1,0 +1,197 @@
+<!--create.wxml-->
+<view class="container">
+  <!-- 头部 -->
+  <view class="header">
+    <view class="header-left">
+      <button class="back-btn" bindtap="onBack">‹</button>
+      <text class="header-title">创建复盘</text>
+    </view>
+    <button class="save-btn {{canSave ? 'active' : ''}}" bindtap="onSave">保存</button>
+  </view>
+
+  <!-- 复盘类型选择 -->
+  <view class="type-section">
+    <view class="section-title">复盘类型</view>
+    <view class="type-tabs">
+      <button class="type-tab {{reviewType === 'daily' ? 'active' : ''}}" 
+              bindtap="onTypeChange" data-type="daily">每日复盘</button>
+      <button class="type-tab {{reviewType === 'weekly' ? 'active' : ''}}" 
+              bindtap="onTypeChange" data-type="weekly">每周复盘</button>
+      <button class="type-tab {{reviewType === 'monthly' ? 'active' : ''}}" 
+              bindtap="onTypeChange" data-type="monthly">每月复盘</button>
+      <button class="type-tab {{reviewType === 'project' ? 'active' : ''}}" 
+              bindtap="onTypeChange" data-type="project">项目复盘</button>
+    </view>
+  </view>
+
+  <!-- 标题输入 -->
+  <view class="input-section">
+    <view class="section-title">复盘标题</view>
+    <input class="title-input" 
+           placeholder="给你的复盘起个标题吧..." 
+           value="{{title}}"
+           bindinput="onTitleInput"
+           maxlength="50" />
+    <view class="char-count">{{title.length}}/50</view>
+  </view>
+
+  <!-- 内容输入区域 -->
+  <view class="content-section">
+    <!-- 亮点与成就 -->
+    <view class="content-block">
+      <view class="block-header">
+        <text class="block-icon">✨</text>
+        <text class="block-title">今日亮点与成就</text>
+      </view>
+      <textarea class="content-textarea"
+                placeholder="记录今天做得好的地方、取得的成就..."
+                value="{{content.highlights}}"
+                bindinput="onContentInput"
+                data-field="highlights"
+                maxlength="1000" />
+      <view class="char-count">{{content.highlights.length}}/1000</view>
+    </view>
+
+    <!-- 问题与挑战 -->
+    <view class="content-block">
+      <view class="block-header">
+        <text class="block-icon">🤔</text>
+        <text class="block-title">遇到的问题与挑战</text>
+      </view>
+      <textarea class="content-textarea"
+                placeholder="记录遇到的困难、问题和挑战..."
+                value="{{content.challenges}}"
+                bindinput="onContentInput"
+                data-field="challenges"
+                maxlength="1000" />
+      <view class="char-count">{{content.challenges.length}}/1000</view>
+    </view>
+
+    <!-- 学习与收获 -->
+    <view class="content-block">
+      <view class="block-header">
+        <text class="block-icon">📚</text>
+        <text class="block-title">学习与收获</text>
+      </view>
+      <textarea class="content-textarea"
+                placeholder="今天学到了什么？有哪些新的认知和收获..."
+                value="{{content.learnings}}"
+                bindinput="onContentInput"
+                data-field="learnings"
+                maxlength="1000" />
+      <view class="char-count">{{content.learnings.length}}/1000</view>
+    </view>
+
+    <!-- 改进计划 -->
+    <view class="content-block">
+      <view class="block-header">
+        <text class="block-icon">🎯</text>
+        <text class="block-title">改进计划</text>
+      </view>
+      <textarea class="content-textarea"
+                placeholder="明天或下次如何做得更好？具体的改进计划..."
+                value="{{content.improvements}}"
+                bindinput="onContentInput"
+                data-field="improvements"
+                maxlength="1000" />
+      <view class="char-count">{{content.improvements.length}}/1000</view>
+    </view>
+  </view>
+
+  <!-- 标签选择 -->
+  <view class="tags-section">
+    <view class="section-title">添加标签</view>
+    <view class="tags-container">
+      <view class="preset-tags">
+        <button class="tag-btn {{selectedTags.includes(item) ? 'selected' : ''}}"
+                wx:for="{{presetTags}}" wx:key="*this"
+                bindtap="onTagToggle" data-tag="{{item}}">{{item}}</button>
+      </view>
+      <view class="custom-tag-input">
+        <input class="tag-input" 
+               placeholder="自定义标签"
+               value="{{customTag}}"
+               bindinput="onCustomTagInput"
+               bindconfirm="onAddCustomTag" />
+        <button class="add-tag-btn" bindtap="onAddCustomTag">+</button>
+      </view>
+    </view>
+    <view class="selected-tags" wx:if="{{selectedTags.length > 0}}">
+      <text class="selected-label">已选择：</text>
+      <view class="selected-tag" wx:for="{{selectedTags}}" wx:key="*this">
+        <text>{{item}}</text>
+        <text class="remove-tag" bindtap="onRemoveTag" data-tag="{{item}}">×</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 心情评分 -->
+  <view class="mood-section">
+    <view class="section-title">今日心情评分</view>
+    <view class="mood-slider">
+      <view class="mood-labels">
+        <text class="mood-label">😢</text>
+        <text class="mood-label">😐</text>
+        <text class="mood-label">😊</text>
+        <text class="mood-label">😄</text>
+        <text class="mood-label">🤩</text>
+      </view>
+      <slider class="slider" 
+              min="1" max="5" step="1" 
+              value="{{moodScore}}"
+              bindchange="onMoodChange"
+              activeColor="#667eea"
+              backgroundColor="#f0f0f0" />
+      <view class="mood-score">当前评分：{{moodScore}}分</view>
+    </view>
+  </view>
+
+  <!-- 模板选择 -->
+  <view class="template-section" wx:if="{{showTemplates}}">
+    <view class="section-title">
+      <text>选择模板</text>
+      <button class="toggle-btn" bindtap="onToggleTemplates">
+        {{showTemplates ? '收起' : '展开'}}
+      </button>
+    </view>
+    <view class="template-list">
+      <view class="template-item" 
+            wx:for="{{templates}}" wx:key="id"
+            bindtap="onSelectTemplate" data-template="{{item}}">
+        <text class="template-name">{{item.name}}</text>
+        <text class="template-desc">{{item.description}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-actions">
+    <button class="action-btn secondary" bindtap="onSaveDraft">保存草稿</button>
+    <button class="action-btn primary {{canSave ? '' : 'disabled'}}" 
+            bindtap="onSave">发布复盘</button>
+  </view>
+</view>
+
+<!-- 模板选择弹窗 -->
+<view class="template-modal {{showTemplateModal ? 'active' : ''}}" bindtap="onCloseTemplateModal">
+  <view class="template-modal-content" catchtap="">
+    <view class="modal-header">
+      <text class="modal-title">选择复盘模板</text>
+      <button class="modal-close" bindtap="onCloseTemplateModal">×</button>
+    </view>
+    <view class="template-grid">
+      <view class="template-card" 
+            wx:for="{{allTemplates}}" wx:key="id"
+            bindtap="onApplyTemplate" data-template="{{item}}">
+        <text class="template-card-name">{{item.name}}</text>
+        <text class="template-card-desc">{{item.description}}</text>
+        <view class="template-preview">
+          <text wx:for="{{item.sections}}" wx:key="*this" wx:for-item="section">
+            {{section}}
+          </text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+

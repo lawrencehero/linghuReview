@@ -1,0 +1,491 @@
+/* history.wxss */
+
+.container {
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* 搜索栏样式 */
+.search-section {
+  padding: 20rpx 40rpx;
+  background: white;
+  border-bottom: 1rpx solid #eee;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  border-radius: 50rpx;
+  padding: 0 24rpx;
+}
+
+.search-icon {
+  font-size: 32rpx;
+  color: #999;
+  margin-right: 16rpx;
+}
+
+.search-input {
+  flex: 1;
+  height: 80rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.filter-btn {
+  background: none;
+  border: none;
+  padding: 12rpx;
+  margin-left: 16rpx;
+}
+
+.filter-icon {
+  font-size: 28rpx;
+}
+
+/* 筛选标签样式 */
+.filter-tags {
+  padding: 20rpx 40rpx;
+  background: white;
+  border-bottom: 1rpx solid #eee;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.filter-tag {
+  display: flex;
+  align-items: center;
+  background: #667eea;
+  color: white;
+  border-radius: 40rpx;
+  padding: 8rpx 16rpx;
+  font-size: 24rpx;
+}
+
+.remove-filter {
+  margin-left: 8rpx;
+  font-size: 28rpx;
+  cursor: pointer;
+}
+
+.clear-filters {
+  background: #ff4757;
+  color: white;
+  border: none;
+  border-radius: 40rpx;
+  padding: 8rpx 16rpx;
+  font-size: 24rpx;
+}
+
+/* 时间筛选样式 */
+.time-filter {
+  padding: 20rpx 40rpx;
+  background: white;
+  border-bottom: 1rpx solid #eee;
+  display: flex;
+  gap: 16rpx;
+}
+
+.time-btn {
+  background: #f8f9fa;
+  color: #666;
+  border: 2rpx solid transparent;
+  border-radius: 40rpx;
+  padding: 12rpx 24rpx;
+  font-size: 26rpx;
+  transition: all 0.3s;
+}
+
+.time-btn.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+/* 统计栏样式 */
+.stats-bar {
+  padding: 20rpx 40rpx;
+  background: white;
+  border-bottom: 1rpx solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stats-text {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.sort-btn {
+  background: none;
+  border: none;
+  color: #667eea;
+  font-size: 26rpx;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.sort-icon {
+  font-size: 24rpx;
+}
+
+/* 复盘列表样式 */
+.reviews-list {
+  padding: 20rpx 40rpx;
+}
+
+.review-item {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.05);
+  transition: transform 0.2s ease;
+}
+
+.review-item:active {
+  transform: scale(0.98);
+}
+
+/* 复盘头部样式 */
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20rpx;
+}
+
+.review-title-section {
+  flex: 1;
+}
+
+.review-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8rpx;
+  line-height: 1.4;
+}
+
+.review-meta {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.review-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.review-type {
+  background: #f8f9fa;
+  color: #667eea;
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
+  font-size: 22rpx;
+}
+
+.review-actions {
+  display: flex;
+  gap: 8rpx;
+}
+
+.action-btn {
+  background: #f8f9fa;
+  border: none;
+  border-radius: 50%;
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s;
+}
+
+.action-btn:active {
+  background: #e9ecef;
+}
+
+.action-icon {
+  font-size: 24rpx;
+}
+
+/* 复盘内容样式 */
+.review-content {
+  margin-bottom: 20rpx;
+}
+
+.content-section {
+  margin-bottom: 12rpx;
+  line-height: 1.5;
+}
+
+.content-section:last-child {
+  margin-bottom: 0;
+}
+
+.content-label {
+  font-size: 24rpx;
+  color: #667eea;
+  font-weight: 600;
+  margin-right: 8rpx;
+}
+
+.content-preview {
+  font-size: 26rpx;
+  color: #666;
+}
+
+/* 复盘底部样式 */
+.review-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.review-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+  flex: 1;
+}
+
+.tag {
+  background: #f8f9fa;
+  color: #667eea;
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
+  font-size: 22rpx;
+}
+
+.mood-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.mood-emoji {
+  font-size: 32rpx;
+}
+
+.mood-score {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 加载更多样式 */
+.load-more {
+  text-align: center;
+  padding: 40rpx 0;
+}
+
+.load-more-btn {
+  background: white;
+  color: #667eea;
+  border: 2rpx solid #667eea;
+  border-radius: 50rpx;
+  padding: 20rpx 40rpx;
+  font-size: 28rpx;
+}
+
+/* 空状态样式 */
+.empty-state {
+  text-align: center;
+  padding: 120rpx 40rpx;
+  background: white;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.05);
+}
+
+.empty-icon {
+  display: block;
+  font-size: 120rpx;
+  margin-bottom: 32rpx;
+  opacity: 0.6;
+}
+
+.empty-text {
+  display: block;
+  font-size: 32rpx;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+
+.empty-desc {
+  display: block;
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.4;
+  margin-bottom: 40rpx;
+}
+
+/* 筛选弹窗样式 */
+.filter-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: flex-end;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+}
+
+.filter-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.filter-modal-content {
+  background: white;
+  border-radius: 20rpx 20rpx 0 0;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 0.3s;
+}
+
+.filter-modal.active .filter-modal-content {
+  transform: translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40rpx;
+  border-bottom: 1rpx solid #eee;
+}
+
+.modal-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 48rpx;
+  color: #999;
+  padding: 0;
+  line-height: 1;
+}
+
+.filter-content {
+  padding: 40rpx;
+}
+
+.filter-group {
+  margin-bottom: 40rpx;
+}
+
+.filter-group:last-child {
+  margin-bottom: 0;
+}
+
+.filter-group-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.filter-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.filter-option {
+  background: #f8f9fa;
+  color: #666;
+  border: 2rpx solid transparent;
+  border-radius: 40rpx;
+  padding: 12rpx 24rpx;
+  font-size: 26rpx;
+  transition: all 0.3s;
+}
+
+.filter-option.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.mood-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.mood-option {
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  border: 2rpx solid transparent;
+  border-radius: 12rpx;
+  padding: 16rpx 20rpx;
+  transition: all 0.3s;
+}
+
+.mood-option.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.mood-emoji {
+  font-size: 32rpx;
+  margin-right: 16rpx;
+}
+
+.mood-text {
+  font-size: 28rpx;
+}
+
+.filter-actions {
+  padding: 40rpx;
+  border-top: 1rpx solid #eee;
+  display: flex;
+  gap: 20rpx;
+}
+
+.filter-action-btn {
+  flex: 1;
+  padding: 24rpx;
+  border-radius: 50rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.filter-action-btn.secondary {
+  background: white;
+  color: #667eea;
+  border: 2rpx solid #667eea;
+}
+
+.filter-action-btn.primary {
+  background: #667eea;
+  color: white;
+  border: 2rpx solid #667eea;
+}
+
