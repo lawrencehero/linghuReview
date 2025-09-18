@@ -1,0 +1,135 @@
+<!-- detail.wxml -->
+<view class="container">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container flex-center">
+    <loading />
+    <text class="ml-10">加载中...</text>
+  </view>
+
+  <!-- 复盘详情 -->
+  <view wx:else class="detail-container">
+    <!-- 头部信息 -->
+    <view class="card p-20">
+      <view class="flex-between mb-15">
+        <text class="text-primary font-weight-bold">{{review.title}}</text>
+        <view class="flex-center cursor-pointer" bindtap="onShowActions">
+          <icon type="more" size="24" color="#999" />
+        </view>
+      </view>
+
+      <view class="flex-between mb-15">
+        <view class="tag tag-outline">{{review.typeText}}</view>
+        <text class="text-muted">{{review.createTimeFormatted}}</text>
+      </view>
+
+      <view class="flex-align-center">
+        <text class="text-secondary mr-10">心情：</text>
+        <text class="text-primary">{{review.moodEmoji}}</text>
+      </view>
+
+      <!-- 标签 -->
+      <view wx:if="{{review.tags && review.tags.length > 0}}" class="mt-15">
+        <view class="flex flex-wrap">
+          <view wx:for="{{review.tags}}" wx:key="index" class="tag tag-small mr-10 mb-10">
+            {{item}}
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 内容区域 -->
+    <view class="card p-20">
+      <!-- 亮点 -->
+      <view class="section mb-20">
+        <view class="section-title flex-align-center mb-10">
+          <icon type="success" size="16" color="#667eea" />
+          <text class="ml-10 font-weight-bold">今日亮点</text>
+        </view>
+        <view class="section-content text-secondary">
+          {{review.content.highlights || '暂无内容'}}
+        </view>
+      </view>
+
+      <!-- 挑战 -->
+      <view class="section mb-20">
+        <view class="section-title flex-align-center mb-10">
+          <icon type="warn" size="16" color="#ff6b6b" />
+          <text class="ml-10 font-weight-bold">遇到问题</text>
+        </view>
+        <view class="section-content text-secondary">
+          {{review.content.challenges || '暂无内容'}}
+        </view>
+      </view>
+
+      <!-- 收获 -->
+      <view class="section mb-20">
+        <view class="section-title flex-align-center mb-10">
+          <icon type="info" size="16" color="#4ecdc4" />
+          <text class="ml-10 font-weight-bold">学习收获</text>
+        </view>
+        <view class="section-content text-secondary">
+          {{review.content.learnings || '暂无内容'}}
+        </view>
+      </view>
+
+      <!-- 改进 -->
+      <view class="section">
+        <view class="section-title flex-align-center mb-10">
+          <icon type="waiting" size="16" color="#ffd166" />
+          <text class="ml-10 font-weight-bold">改进建议</text>
+        </view>
+        <view class="section-content text-secondary">
+          {{review.content.improvements || '暂无内容'}}
+        </view>
+      </view>
+    </view>
+
+    <!-- 更新时间 -->
+    <view class="text-center text-muted mt-20 mb-20">
+      <text>更新于 {{review.updateTimeFormatted}}</text>
+    </view>
+  </view>
+
+  <!-- 操作菜单 -->
+  <view wx:if="{{showActionSheet}}" class="action-sheet-mask" bindtap="onCloseActions">
+    <view class="action-sheet" bindtap="onCloseActions">
+      <view class="action-sheet-content" bindtap="stopPropagation">
+        <view class="action-item" bindtap="onActionSelect" data-action="edit">
+          <icon type="edit" size="20" />
+          <text class="ml-15">编辑</text>
+        </view>
+        <view class="action-item" bindtap="onActionSelect" data-action="delete">
+          <icon type="cancel" size="20" color="#ff6b6b" />
+          <text class="ml-15" style="color: #ff6b6b;">删除</text>
+        </view>
+        <view class="action-item" bindtap="onActionSelect" data-action="share">
+          <icon type="share" size="20" />
+          <text class="ml-15">分享</text>
+        </view>
+        <view class="action-item" bindtap="onCopyContent">
+          <icon type="copy" size="20" />
+          <text class="ml-15">复制</text>
+        </view>
+      </view>
+      <view class="action-cancel" bindtap="onCloseActions">
+        <text>取消</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 删除确认弹窗 -->
+  <view wx:if="{{showDeleteModal}}" class="modal-mask">
+    <view class="modal-content">
+      <view class="modal-header">
+        <text class="font-weight-bold">确认删除</text>
+      </view>
+      <view class="modal-body">
+        <text>确定要删除这篇复盘记录吗？删除后无法恢复。</text>
+      </view>
+      <view class="modal-footer flex-between">
+        <button class="btn-secondary flex-1 mr-10" bindtap="onCloseDeleteModal">取消</button>
+        <button class="btn-danger flex-1 ml-10" bindtap="onConfirmDelete">删除</button>
+      </view>
+    </view>
+  </view>
+</view>

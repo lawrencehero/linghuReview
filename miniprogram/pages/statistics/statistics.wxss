@@ -1,0 +1,217 @@
+/* statistics.wxss */
+.statistics-container {
+  padding: 20rpx;
+}
+
+.loading-container {
+  height: 60vh;
+}
+
+/* 概览卡片 */
+.overview-cards {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.overview-card {
+  flex: 1;
+  margin-right: 20rpx;
+  padding: 30rpx 20rpx;
+}
+
+.overview-card:last-child {
+  margin-right: 0;
+}
+
+.overview-item {
+  text-align: center;
+}
+
+.overview-number {
+  display: block;
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #667eea;
+  margin-bottom: 10rpx;
+}
+
+.overview-label {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 时间范围选择 */
+.time-range-selector {
+  padding: 10rpx 0;
+}
+
+.time-range-item {
+  padding: 15rpx 30rpx;
+  border-radius: 30rpx;
+  background-color: #f0f0f0;
+  color: #666;
+  font-size: 28rpx;
+}
+
+.time-range-item.active {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+}
+
+/* 图表区域 */
+.chart-placeholder {
+  display: flex;
+  align-items: flex-end;
+  height: 300rpx;
+  padding: 20rpx 0;
+  border-top: 1rpx solid #eee;
+  border-bottom: 1rpx solid #eee;
+}
+
+.chart-bar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  margin: 0 10rpx;
+}
+
+.bar {
+  width: 40rpx;
+  background: linear-gradient(to top, #667eea, #764ba2);
+  border-radius: 8rpx 8rpx 0 0;
+  margin-bottom: 10rpx;
+}
+
+.bar-label {
+  font-size: 20rpx;
+  color: #999;
+  margin-bottom: 5rpx;
+}
+
+.bar-value {
+  font-size: 20rpx;
+  color: #666;
+  font-weight: bold;
+}
+
+/* 分布区域 */
+.distribution-container {
+  padding: 10rpx 0;
+}
+
+.distribution-item {
+  margin-bottom: 20rpx;
+}
+
+.distribution-item:last-child {
+  margin-bottom: 0;
+}
+
+.distribution-bar {
+  height: 20rpx;
+  background-color: #f0f0f0;
+  border-radius: 10rpx;
+  margin-bottom: 10rpx;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  border-radius: 10rpx;
+}
+
+.distribution-info {
+  font-size: 26rpx;
+  color: #666;
+}
+
+/* 心情分布 */
+.mood-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.mood-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 20%;
+  margin-bottom: 20rpx;
+}
+
+.mood-emoji {
+  font-size: 48rpx;
+  margin-bottom: 10rpx;
+}
+
+.mood-count {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5rpx;
+}
+
+.mood-percent {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 标签云 */
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20rpx 0;
+}
+
+.tag-cloud-item {
+  margin: 15rpx 20rpx;
+  color: #667eea;
+  font-weight: 500;
+}
+
+.tag-cloud-item:nth-child(2n) {
+  color: #764ba2;
+}
+
+.tag-cloud-item:nth-child(3n) {
+  color: #4ecdc4;
+}
+
+.tag-cloud-item:nth-child(4n) {
+  color: #ffd166;
+}
+
+.tag-cloud-item:nth-child(5n) {
+  color: #ff6b6b;
+}
+
+/* 标题 */
+.section-title {
+  color: #333;
+  font-size: 32rpx;
+}
+
+/* 工具类 */
+.ml-10 {
+  margin-left: 20rpx;
+}
+
+.mb-20 {
+  margin-bottom: 40rpx;
+}
+
+.font-weight-bold {
+  font-weight: bold;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

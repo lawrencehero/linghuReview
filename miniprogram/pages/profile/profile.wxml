@@ -1,0 +1,209 @@
+<!-- profile.wxml -->
+<view class="container">
+  <!-- 用户信息区域 -->
+  <view class="user-header card">
+    <view class="user-info">
+      <view wx:if="{{isLogin}}" class="flex-align-center">
+        <image class="user-avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+        <view class="user-details">
+          <text class="user-name">{{userInfo.nickName || '用户'}}</text>
+          <text class="user-desc">欢迎使用灵狐复盘</text>
+        </view>
+      </view>
+      <view wx:else class="flex-align-center">
+        <image class="user-avatar" src="/images/default-avatar.png" mode="aspectFill"></image>
+        <view class="user-details">
+          <text class="user-name">未登录</text>
+          <text class="user-desc">点击登录享受完整功能</text>
+        </view>
+        <button class="login-btn" bindtap="onShowLogin">登录</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 统计数据 -->
+  <view class="stats-grid card">
+    <view class="stat-item" bindtap="onGoToHistory">
+      <text class="stat-number">{{stats.totalReviews}}</text>
+      <text class="stat-label">总复盘数</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{stats.continuousDays}}</text>
+      <text class="stat-label">连续天数</text>
+    </view>
+    <view class="stat-item" bindtap="onGoToStatistics">
+      <text class="stat-number">{{stats.completionRate}}%</text>
+      <text class="stat-label">完成率</text>
+    </view>
+  </view>
+
+  <!-- 功能列表 -->
+  <view class="menu-list">
+    <!-- 历史记录 -->
+    <view class="menu-item card" bindtap="onGoToHistory">
+      <view class="menu-content flex-between">
+        <view class="flex-align-center">
+          <icon type="history" size="20" color="#667eea" />
+          <text class="ml-15">历史记录</text>
+        </view>
+        <icon type="right" size="16" color="#ccc" />
+      </view>
+    </view>
+
+    <!-- 统计分析 -->
+    <view class="menu-item card" bindtap="onGoToStatistics">
+      <view class="menu-content flex-between">
+        <view class="flex-align-center">
+          <icon type="chart" size="20" color="#667eea" />
+          <text class="ml-15">统计分析</text>
+        </view>
+        <icon type="right" size="16" color="#ccc" />
+      </view>
+    </view>
+
+    <!-- 意见反馈 -->
+    <view class="menu-item card" bindtap="onShowFeedback">
+      <view class="menu-content flex-between">
+        <view class="flex-align-center">
+          <icon type="feedback" size="20" color="#667eea" />
+          <text class="ml-15">意见反馈</text>
+        </view>
+        <icon type="right" size="16" color="#ccc" />
+      </view>
+    </view>
+
+    <!-- 关于我们 -->
+    <view class="menu-item card" bindtap="onShowAbout">
+      <view class="menu-content flex-between">
+        <view class="flex-align-center">
+          <icon type="info" size="20" color="#667eea" />
+          <text class="ml-15">关于我们</text>
+        </view>
+        <icon type="right" size="16" color="#ccc" />
+      </view>
+    </view>
+
+    <!-- 检查更新 -->
+    <view class="menu-item card" bindtap="onCheckUpdate">
+      <view class="menu-content flex-between">
+        <view class="flex-align-center">
+          <icon type="download" size="20" color="#667eea" />
+          <text class="ml-15">检查更新</text>
+        </view>
+        <text class="menu-extra">v{{appVersion}}</text>
+      </view>
+    </view>
+
+    <!-- 清除缓存 -->
+    <view class="menu-item card" bindtap="onClearCache">
+      <view class="menu-content flex-between">
+        <view class="flex-align-center">
+          <icon type="clear" size="20" color="#667eea" />
+          <text class="ml-15">清除缓存</text>
+        </view>
+        <icon type="right" size="16" color="#ccc" />
+      </view>
+    </view>
+
+    <!-- 联系客服 -->
+    <view class="menu-item card" bindtap="onContactSupport">
+      <view class="menu-content flex-between">
+        <view class="flex-align-center">
+          <icon type="service" size="20" color="#667eea" />
+          <text class="ml-15">联系客服</text>
+        </view>
+        <icon type="right" size="16" color="#ccc" />
+      </view>
+    </view>
+  </view>
+
+  <!-- 登出按钮 -->
+  <view wx:if="{{isLogin}}" class="logout-section p-20">
+    <button class="btn-danger w-full" bindtap="onLogout">退出登录</button>
+  </view>
+
+  <!-- 登录弹窗 -->
+  <view wx:if="{{showLoginModal}}" class="modal-mask" bindtap="onCloseLogin">
+    <view class="modal-content" bindtap="stopPropagation">
+      <view class="modal-header">
+        <text class="font-weight-bold">用户登录</text>
+      </view>
+      <view class="modal-body text-center">
+        <text>登录后可享受完整功能，包括数据同步、统计分析等。</text>
+      </view>
+      <view class="modal-footer">
+        <button class="btn-primary w-full" bindtap="onConfirmLogin">确认登录</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 登出确认弹窗 -->
+  <view wx:if="{{showLogoutModal}}" class="modal-mask" bindtap="onCloseLogout">
+    <view class="modal-content" bindtap="stopPropagation">
+      <view class="modal-header">
+        <text class="font-weight-bold">确认退出</text>
+      </view>
+      <view class="modal-body text-center">
+        <text>确定要退出登录吗？</text>
+      </view>
+      <view class="modal-footer flex-between">
+        <button class="btn-secondary flex-1 mr-10" bindtap="onCloseLogout">取消</button>
+        <button class="btn-danger flex-1 ml-10" bindtap="onConfirmLogout">退出</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 意见反馈弹窗 -->
+  <view wx:if="{{showFeedbackModal}}" class="modal-mask" bindtap="onCloseFeedback">
+    <view class="modal-content feedback-modal" bindtap="stopPropagation">
+      <view class="modal-header">
+        <text class="font-weight-bold">意见反馈</text>
+      </view>
+      <view class="modal-body">
+        <textarea
+          class="feedback-textarea"
+          placeholder="请输入您的宝贵意见和建议..."
+          value="{{feedbackContent}}"
+          bindinput="onFeedbackInput"
+          maxlength="500"
+        />
+      </view>
+      <view class="modal-footer">
+        <button class="btn-primary w-full" bindtap="onSubmitFeedback">提交反馈</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 关于我们弹窗 -->
+  <view wx:if="{{showAboutModal}}" class="modal-mask" bindtap="onCloseAbout">
+    <view class="modal-content about-modal" bindtap="stopPropagation">
+      <view class="modal-header text-center">
+        <image class="app-logo" src="/images/logo.png" mode="aspectFit"></image>
+        <text class="app-name">灵狐复盘</text>
+        <text class="app-version">v{{appVersion}}</text>
+      </view>
+      <view class="modal-body">
+        <view class="about-content">
+          <text>灵狐复盘是一款专注于个人成长的复盘工具，帮助您记录、分析和总结日常生活和工作中的经验教训。</text>
+        </view>
+        <view class="about-features">
+          <view class="feature-item">
+            <icon type="success" size="16" color="#667eea" />
+            <text class="ml-10">多种复盘模板</text>
+          </view>
+          <view class="feature-item">
+            <icon type="success" size="16" color="#667eea" />
+            <text class="ml-10">数据统计分析</text>
+          </view>
+          <view class="feature-item">
+            <icon type="success" size="16" color="#667eea" />
+            <text class="ml-10">云端数据同步</text>
+          </view>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <button class="btn-secondary w-full" bindtap="onCloseAbout">确定</button>
+      </view>
+    </view>
+  </view>
+</view>

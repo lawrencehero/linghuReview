@@ -1,0 +1,124 @@
+<!-- statistics.wxml -->
+<view class="container">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container flex-center">
+    <loading />
+    <text class="ml-10">加载中...</text>
+  </view>
+
+  <!-- 统计内容 -->
+  <view wx:else class="statistics-container">
+    <!-- 概览卡片 -->
+    <view class="overview-cards">
+      <view class="card overview-card">
+        <view class="overview-item">
+          <text class="overview-number">{{totalReviews}}</text>
+          <text class="overview-label">总复盘数</text>
+        </view>
+      </view>
+
+      <view class="card overview-card">
+        <view class="overview-item">
+          <text class="overview-number">{{continuousDays}}</text>
+          <text class="overview-label">连续天数</text>
+        </view>
+      </view>
+
+      <view class="card overview-card">
+        <view class="overview-item">
+          <text class="overview-number">{{completionRate}}%</text>
+          <text class="overview-label">完成率</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 时间范围选择 -->
+    <view class="card p-20 mb-20">
+      <view class="time-range-selector flex-between">
+        <view
+          class="time-range-item {{timeRange === 'day' ? 'active' : ''}}"
+          bindtap="onTimeRangeChange"
+          data-range="day">
+          <text>日</text>
+        </view>
+        <view
+          class="time-range-item {{timeRange === 'week' ? 'active' : ''}}"
+          bindtap="onTimeRangeChange"
+          data-range="week">
+          <text>周</text>
+        </view>
+        <view
+          class="time-range-item {{timeRange === 'month' ? 'active' : ''}}"
+          bindtap="onTimeRangeChange"
+          data-range="month">
+          <text>月</text>
+        </view>
+        <view
+          class="time-range-item {{timeRange === 'year' ? 'active' : ''}}"
+          bindtap="onTimeRangeChange"
+          data-range="year">
+          <text>年</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 图表区域 -->
+    <view class="card p-20 mb-20">
+      <view class="section-title mb-20">
+        <text class="font-weight-bold">复盘趋势</text>
+      </view>
+      <!-- 这里应该放图表组件，暂时用列表展示 -->
+      <view class="chart-placeholder">
+        <view wx:for="{{chartData.daily}}" wx:key="index" class="chart-bar">
+          <view class="bar" style="height: {{item.count * 10}}rpx;"></view>
+          <text class="bar-label">{{item.date}}</text>
+          <text class="bar-value">{{item.count}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 类型分布 -->
+    <view class="card p-20 mb-20">
+      <view class="section-title mb-20">
+        <text class="font-weight-bold">类型分布</text>
+      </view>
+      <view class="distribution-container">
+        <view wx:for="{{typeDistribution}}" wx:key="type" class="distribution-item">
+          <view class="distribution-bar">
+            <view class="bar-fill" style="width: {{item.percent}}%;"></view>
+          </view>
+          <view class="distribution-info flex-between">
+            <text>{{item.name}}</text>
+            <text>{{item.count}} ({{item.percent}}%)</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 心情分布 -->
+    <view class="card p-20 mb-20">
+      <view class="section-title mb-20">
+        <text class="font-weight-bold">心情分布</text>
+      </view>
+      <view class="mood-container">
+        <view wx:for="{{moodDistribution}}" wx:key="score" class="mood-item">
+          <view class="mood-emoji">{{item.emoji}}</view>
+          <view class="mood-count">{{item.count}}</view>
+          <view class="mood-percent">{{item.percent}}%</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 标签云 -->
+    <view class="card p-20 mb-20">
+      <view class="section-title mb-20">
+        <text class="font-weight-bold">热门标签</text>
+      </view>
+      <view class="tag-cloud">
+        <view wx:for="{{tagCloud}}" wx:key="name" class="tag-cloud-item" style="font-size: {{item.size}}rpx;">
+          {{item.name}}
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
