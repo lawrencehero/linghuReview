@@ -329,7 +329,8 @@ Page({
       wx.removeStorageSync('reviewDraft');
 
       // 更新全局统计数据
-      app.globalData.stats.totalReviews++;
+      const app = getApp();
+      app.globalData.stats.totalReviews = (app.globalData.stats.totalReviews || 0) + 1;
 
       wx.showToast({
         title: '保存成功',

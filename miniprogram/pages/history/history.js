@@ -58,7 +58,7 @@ Page({
   // 加载复盘记录
   async loadReviews() {
     wx.showLoading({ title: '加载中...' });
-    
+
     try {
       const db = wx.cloud.database();
       const { data } = await db.collection('reviews')
@@ -80,7 +80,7 @@ Page({
         moodEmoji: this.getMoodEmoji(item.moodScore),
         createTime: item.createTime,
         timeAgo: this.getTimeAgo(item.createTime),
-        
+
         // 内容预览
         highlights: this.getPreview(item.content?.highlights),
         challenges: this.getPreview(item.content?.challenges),
@@ -500,6 +500,13 @@ Page({
   onCreateReview() {
     wx.navigateTo({
       url: '/pages/create/create'
+    });
+  },
+
+  // 导航到首页
+  onGoHome() {
+    wx.switchTab({
+      url: '/pages/index/index'
     });
   },
 

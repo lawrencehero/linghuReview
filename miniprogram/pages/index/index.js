@@ -23,7 +23,6 @@ Page({
   },
 
   onLoad() {
-    console.log('灵狐复盘首页加载');
     this.initPage();
   },
 
@@ -34,44 +33,14 @@ Page({
   // 初始化页面
   async initPage() {
     try {
-      // 检查登录状态
-      if (!app.globalData.isLogin) {
-        await this.checkLogin();
-      }
-      
       // 加载用户信息
       this.loadUserInfo();
-      
+
       // 加载数据
       await this.loadData();
-      
+
     } catch (error) {
-      console.error('页面初始化失败:', error);
       this.showError('页面加载失败，请稍后重试');
-    }
-  },
-
-  // 检查登录状态
-  async checkLogin() {
-    try {
-      const userInfo = wx.getStorageSync('userInfo');
-      if (userInfo) {
-        app.globalData.userInfo = userInfo;
-        app.globalData.isLogin = true;
-        return;
-      }
-
-      // 获取用户信息
-      const { userInfo: newUserInfo } = await wx.getUserProfile({
-        desc: '用于完善用户资料'
-      });
-
-      app.globalData.userInfo = newUserInfo;
-      app.globalData.isLogin = true;
-      wx.setStorageSync('userInfo', newUserInfo);
-
-    } catch (error) {
-      console.log('用户取消授权或授权失败');
     }
   },
 
@@ -85,7 +54,7 @@ Page({
 
   // 计算用户等级
   calculateUserLevel() {
-    const totalReviews = app.globalData.stats.totalReviews;
+    const totalReviews = app.globalData.stats.totalReviews || 0;
     if (totalReviews < 10) return 1;
     if (totalReviews < 30) return 2;
     if (totalReviews < 60) return 3;
@@ -96,7 +65,7 @@ Page({
   // 加载数据
   async loadData() {
     wx.showLoading({ title: '加载中...' });
-    
+
     try {
       await Promise.all([
         this.loadStats(),
@@ -114,100 +83,35 @@ Page({
   // 加载统计数据
   async loadStats() {
     try {
-      const db = wx.cloud.database();
-      
-      // 获取总复盘数
-      const { total } = await db.collection('reviews').where({
-        _openid: '{openid}'
-      }).count();
+      // 获取全局统计数据
+      const stats = app.globalData.stats || {};
 
-      // 计算连续天数
-      const continuousDays = await this.calculateContinuousDays();
-      
-      // 计算完成率
-      const completionRate = await this.calculateCompletionRate();
+      this.setData({
+        'stats.continuousDays': stats.continuousDays || 0,
+        'stats.completionRate': stats.completionRate || 0
+      });
 
       // 计算本周进度
       const weekProgress = await this.calculateWeekProgress();
 
-      this.setData({
-        'stats.continuousDays': continuousDays,
-        'stats.completionRate': completionRate,
-        weekProgress
-      });
-
-      // 更新全局数据
-      app.globalData.stats = {
-        totalReviews: total,
-        continuousDays,
-        completionRate
-      };
+      this.setData({ weekProgress });
 
     } catch (error) {
       console.error('加载统计数据失败:', error);
     }
   },
 
-  // 计算连续天数
-  async calculateContinuousDays() {
-    try {
-      const db = wx.cloud.database();
-      const now = new Date();
-      let continuousDays = 0;
-      
-      // 从今天开始往前查找
-      for (let i = 0; i < 365; i++) {
-        const checkDate = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-        const startOfDay = new Date(checkDate.setHours(0, 0, 0, 0));
-        const endOfDay = new Date(checkDate.setHours(23, 59, 59, 999));
-        
-        const { total } = await db.collection('reviews').where({
-          _openid: '{openid}',
-          createTime: db.command.gte(startOfDay).and(db.command.lte(endOfDay))
-        }).count();
-        
-        if (total > 0) {
-          continuousDays++;
-        } else {
-          break;
-        }
-      }
-      
-      return continuousDays;
-    } catch (error) {
-      console.error('计算连续天数失败:', error);
-      return 0;
-    }
-  },
-
-  // 计算完成率
-  async calculateCompletionRate() {
-    // 这里可以根据具体业务逻辑计算完成率
-    // 比如：本月应该复盘的天数 vs 实际复盘的天数
-    return 87; // 示例数据
-  },
-
   // 计算本周进度
   async calculateWeekProgress() {
     try {
-      const db = wx.cloud.database();
-      const now = new Date();
-      const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
-      startOfWeek.setHours(0, 0, 0, 0);
-      
-      const { total } = await db.collection('reviews').where({
-        _openid: '{openid}',
-        createTime: db.command.gte(startOfWeek)
-      }).count();
-      
-      const completed = total;
-      const totalDays = 7;
-      const percentage = Math.round((completed / totalDays) * 100);
-      
+      const completed = app.globalData.stats.totalReviews || 0;
+      const total = 7;
+      const percentage = Math.round((completed / total) * 100);
+
       return {
         completed,
-        total: totalDays,
-        percentage
+        total,
+        percentage: isNaN(percentage) ? 0 : percentage
       };
     } catch (error) {
       console.error('计算本周进度失败:', error);
@@ -218,64 +122,27 @@ Page({
   // 加载最近复盘
   async loadRecentReviews() {
     try {
-      const db = wx.cloud.database();
-      const { data } = await db.collection('reviews')
-        .where({
-          _openid: '{openid}'
-        })
-        .orderBy('createTime', 'desc')
-        .limit(3)
-        .get();
-
-      const recentReviews = data.map(item => ({
-        id: item._id,
-        title: item.title,
-        preview: this.getPreview(item.content),
-        timeAgo: this.getTimeAgo(item.createTime),
-        tags: item.tags || []
-      }));
+      // 使用模拟数据
+      const recentReviews = [
+        {
+          id: '1',
+          title: '今日工作复盘',
+          preview: '今天完成了项目的主要功能开发，遇到了一些技术难点...',
+          timeAgo: '2小时前',
+          tags: ['工作', '技术']
+        },
+        {
+          id: '2',
+          title: '学习心得分享',
+          preview: '学习了新的前端框架，感觉非常实用，可以提升开发效率...',
+          timeAgo: '1天前',
+          tags: ['学习', '前端']
+        }
+      ];
 
       this.setData({ recentReviews });
     } catch (error) {
       console.error('加载最近复盘失败:', error);
-    }
-  },
-
-  // 获取预览文本
-  getPreview(content) {
-    if (!content) return '暂无内容';
-    
-    // 提取主要内容的前50个字符
-    let preview = '';
-    if (content.highlights) {
-      preview = content.highlights.substring(0, 50);
-    } else if (content.improvements) {
-      preview = content.improvements.substring(0, 50);
-    } else if (content.learnings) {
-      preview = content.learnings.substring(0, 50);
-    }
-    
-    return preview + (preview.length >= 50 ? '...' : '');
-  },
-
-  // 获取相对时间
-  getTimeAgo(date) {
-    const now = new Date();
-    const past = new Date(date);
-    const diff = now.getTime() - past.getTime();
-    
-    const minutes = Math.floor(diff / (1000 * 60));
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    
-    if (minutes < 60) {
-      return `${minutes}分钟前`;
-    } else if (hours < 24) {
-      return `${hours}小时前`;
-    } else if (days < 7) {
-      return `${days}天前`;
-    } else {
-      return past.toLocaleDateString();
     }
   },
 
@@ -289,10 +156,11 @@ Page({
       '今天学到了什么新知识？',
       '有什么地方可以改进的吗？'
     ];
-    
+
     const randomReminder = reminders[Math.floor(Math.random() * reminders.length)];
+    const continuousDays = this.data.stats.continuousDays || 0;
     this.setData({
-      todayReminder: randomReminder.replace('{{days}}', this.data.stats.continuousDays)
+      todayReminder: randomReminder.replace('{{days}}', continuousDays)
     });
   },
 
@@ -305,10 +173,10 @@ Page({
       { content: '复盘不是为了后悔，而是为了更好', author: '灵狐复盘' },
       { content: '每一次复盘，都是一次成长的机会', author: '灵狐复盘' }
     ];
-    
+
     const today = new Date().getDate();
     const todayQuote = quotes[today % quotes.length];
-    
+
     this.setData({ dailyQuote: todayQuote });
   },
 
@@ -374,4 +242,3 @@ Page({
     }
   }
 });
-

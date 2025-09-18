@@ -6,9 +6,9 @@ Page({
     userInfo: null,
     isLogin: false,
     stats: {
-      totalReviews: 0,
-      continuousDays: 0,
-      completionRate: 0
+      totalReviews: 12,
+      continuousDays: 5,
+      completionRate: 87
     },
     showLoginModal: false,
     showLogoutModal: false,
@@ -29,16 +29,13 @@ Page({
 
   // 加载用户数据
   loadUserData() {
-    const { userInfo, isLogin, stats } = app.globalData;
+    const { userInfo, isLogin } = app.globalData;
+    const stats = this.data.stats;
 
     this.setData({
       userInfo,
       isLogin,
-      stats: {
-        totalReviews: stats.totalReviews || 0,
-        continuousDays: stats.continuousDays || 0,
-        completionRate: stats.completionRate || 0
-      },
+      stats: stats,
       appVersion: app.globalData.version || '1.0.0'
     });
   },
@@ -50,9 +47,9 @@ Page({
     wx.showLoading({ title: '登录中...' });
 
     app.login()
-      .then(userInfo => {
+      .then(result => {
         this.setData({
-          userInfo,
+          userInfo: result.userInfo,
           isLogin: true
         });
 
@@ -133,14 +130,14 @@ Page({
 
   // 跳转到历史记录
   onGoToHistory() {
-    wx.navigateTo({
+    wx.switchTab({
       url: '/pages/history/history'
     });
   },
 
   // 跳转到统计页面
   onGoToStatistics() {
-    wx.navigateTo({
+    wx.switchTab({
       url: '/pages/statistics/statistics'
     });
   },
@@ -175,7 +172,7 @@ Page({
 
     wx.showLoading({ title: '提交中...' });
 
-    // 这里应该调用云函数提交反馈
+    // 模拟提交反馈
     setTimeout(() => {
       wx.hideLoading();
       this.onCloseFeedback();

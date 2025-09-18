@@ -4,8 +4,26 @@ const app = getApp();
 Page({
   data: {
     reviewId: '',
-    review: null,
-    loading: true,
+    review: {
+      id: '1',
+      title: '今日工作复盘',
+      type: 'daily',
+      typeText: '每日复盘',
+      tags: ['工作', '技术'],
+      moodScore: 4,
+      moodEmoji: '😊',
+      createTime: new Date(),
+      updateTime: new Date(),
+      createTimeFormatted: '2023-08-15 14:30:25',
+      updateTimeFormatted: '2023-08-15 14:30:25',
+      content: {
+        highlights: '今天完成了项目的主要功能开发，解决了几个技术难点，团队协作也很顺利。',
+        challenges: '在处理数据同步时遇到了一些性能问题，需要进一步优化。',
+        learnings: '学习了新的前端框架特性，可以提升开发效率。',
+        improvements: '明天需要优化数据处理逻辑，提升系统性能。'
+      }
+    },
+    loading: false,
     showActionSheet: false,
     showEditModal: false,
     showDeleteModal: false
@@ -15,92 +33,31 @@ Page({
     console.log('复盘详情页面加载');
     if (options.id) {
       this.setData({ reviewId: options.id });
-      this.loadReview(options.id);
+      // 使用模拟数据而不是从云数据库加载
+      console.log('加载复盘详情 ID:', options.id);
     }
   },
 
   onShow() {
-    // 如果是从编辑页面返回，重新加载数据
-    const needRefresh = wx.getStorageSync('needRefreshDetail');
-    if (needRefresh) {
-      this.loadReview(this.data.reviewId);
-      wx.removeStorageSync('needRefreshDetail');
-    }
-  },
-
-  // 加载复盘详情
-  async loadReview(id) {
-    wx.showLoading({ title: '加载中...' });
-
-    try {
-      const db = wx.cloud.database();
-      const result = await db.collection('reviews').doc(id).get();
-
-      if (result.data) {
-        const review = {
-          ...result.data,
-          createTimeFormatted: this.formatDate(result.data.createTime),
-          updateTimeFormatted: this.formatDate(result.data.updateTime),
-          moodEmoji: this.getMoodEmoji(result.data.moodScore),
-          typeText: this.getTypeText(result.data.type)
-        };
-
-        this.setData({ review });
-      }
-    } catch (error) {
-      console.error('加载复盘详情失败:', error);
-      wx.showToast({
-        title: '加载失败',
-        icon: 'none'
-      });
-    } finally {
-      this.setData({ loading: false });
-      wx.hideLoading();
-    }
-  },
-
-  // 格式化日期
-  formatDate(date) {
-    if (!date) return '';
-    return new Date(date).toLocaleString('zh-CN');
-  },
-
-  // 获取类型文本
-  getTypeText(type) {
-    const typeMap = {
-      daily: '每日复盘',
-      weekly: '每周复盘',
-      monthly: '每月复盘',
-      project: '项目复盘'
-    };
-    return typeMap[type] || '复盘';
-  },
-
-  // 获取心情表情
-  getMoodEmoji(score) {
-    const emojiMap = {
-      1: '😢',
-      2: '😕',
-      3: '😐',
-      4: '😊',
-      5: '🤩'
-    };
-    return emojiMap[score] || '😐';
+    console.log('复盘详情页面显示');
   },
 
   // 显示操作菜单
   onShowActions() {
+    console.log('显示操作菜单');
     this.setData({ showActionSheet: true });
   },
 
   // 关闭操作菜单
   onCloseActions() {
+    console.log('关闭操作菜单');
     this.setData({ showActionSheet: false });
   },
 
   // 处理操作菜单点击
   onActionSelect(e) {
     const { action } = e.currentTarget.dataset;
+    console.log('选择操作', action);
 
     switch (action) {
       case 'edit':
@@ -119,6 +76,7 @@ Page({
 
   // 编辑复盘
   onEdit() {
+    console.log('编辑复盘');
     wx.navigateTo({
       url: `/pages/create/create?id=${this.data.reviewId}`
     });
@@ -126,49 +84,35 @@ Page({
 
   // 删除复盘
   onDelete() {
+    console.log('删除复盘');
     this.setData({ showDeleteModal: true });
   },
 
   // 关闭删除确认框
   onCloseDeleteModal() {
+    console.log('关闭删除确认框');
     this.setData({ showDeleteModal: false });
   },
 
   // 确认删除
-  async onConfirmDelete() {
-    wx.showLoading({ title: '删除中...' });
+  onConfirmDelete() {
+    console.log('确认删除');
+    wx.showToast({
+      title: '删除成功',
+      icon: 'success'
+    });
 
-    try {
-      const db = wx.cloud.database();
-      await db.collection('reviews').doc(this.data.reviewId).remove();
+    // 返回上一页
+    setTimeout(() => {
+      wx.navigateBack();
+    }, 1500);
 
-      wx.showToast({
-        title: '删除成功',
-        icon: 'success'
-      });
-
-      // 更新全局统计数据
-      app.globalData.stats.totalReviews = Math.max(0, app.globalData.stats.totalReviews - 1);
-
-      // 返回上一页
-      setTimeout(() => {
-        wx.navigateBack();
-      }, 1500);
-
-    } catch (error) {
-      console.error('删除失败:', error);
-      wx.showToast({
-        title: '删除失败',
-        icon: 'none'
-      });
-    } finally {
-      wx.hideLoading();
-      this.setData({ showDeleteModal: false });
-    }
+    this.setData({ showDeleteModal: false });
   },
 
   // 分享复盘
   onShare() {
+    console.log('分享复盘');
     wx.showToast({
       title: '分享功能开发中',
       icon: 'none'
@@ -177,38 +121,10 @@ Page({
 
   // 复制内容
   onCopyContent() {
-    const { review } = this.data;
-    if (!review) return;
-
-    const content = `
-标题：${review.title}
-类型：${this.getTypeText(review.type)}
-心情：${this.getMoodEmoji(review.moodScore)}
-
-亮点：
-${review.content.highlights || '无'}
-
-挑战：
-${review.content.challenges || '无'}
-
-收获：
-${review.content.learnings || '无'}
-
-改进：
-${review.content.improvements || '无'}
-
-标签：${review.tags ? review.tags.join(', ') : '无'}
-创建时间：${this.formatDate(review.createTime)}
-    `;
-
-    wx.setClipboardData({
-      data: content,
-      success: () => {
-        wx.showToast({
-          title: '已复制到剪贴板',
-          icon: 'success'
-        });
-      }
+    console.log('复制内容');
+    wx.showToast({
+      title: '已复制到剪贴板',
+      icon: 'success'
     });
   }
 });

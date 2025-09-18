@@ -3,7 +3,9 @@
   <!-- 头部用户信息 -->
   <view class="header primary-bg">
     <view class="user-info">
-      <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="avatar-placeholder">
+        <text class="avatar-text">{{userInfo.nickName ? userInfo.nickName.charAt(0) : '用'}}</text>
+      </view>
       <view class="user-details">
         <text class="user-name">{{userInfo.nickName || '灵狐用户'}}</text>
         <text class="user-level">Lv.{{userLevel}} 复盘达人</text>
@@ -68,10 +70,10 @@
       <text class="section-title">最近复盘</text>
       <text class="more-btn" bindtap="onViewHistory">查看更多</text>
     </view>
-    
+
     <view class="recent-list">
-      <view class="recent-item card fade-in" 
-            wx:for="{{recentReviews}}" 
+      <view class="recent-item card fade-in"
+            wx:for="{{recentReviews}}"
             wx:key="id"
             bindtap="onViewDetail"
             data-id="{{item.id}}">
@@ -107,4 +109,3 @@
     </view>
   </view>
 </view>
-
